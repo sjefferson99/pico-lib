@@ -1,12 +1,16 @@
-from utime import ticks_ms
+"""
+Built against Pimoroni Micropython version: v1.22.2 (https://github.com/pimoroni/pimoroni-pico/releases/download/v1.22.2/pimoroni-picow-v1.22.2-micropython.uf2)
+"""
+
+from time import ticks_ms
 from math import ceil
 import rp2
 import network
-from ubinascii import hexlify
+from binascii import hexlify
 import config
 from ulogging import uLogger
 from led import Status_LED
-import uasyncio
+from asyncio import sleep
 
 class Wireless_Network:
     """
@@ -70,7 +74,7 @@ class Wireless_Network:
     
     async def wait_status(self, expected_status, *, timeout=config.WIFI_CONNECT_TIMEOUT_SECONDS, tick_sleep=0.5) -> bool:
         for unused in range(ceil(timeout / tick_sleep)):
-            await uasyncio.sleep(tick_sleep)
+            await sleep(tick_sleep)
             status = self.dump_status()
             if status == expected_status:
                 return True
@@ -162,7 +166,7 @@ class Wireless_Network:
         """Async coroutine to ensure network connectivity"""
         while True:
             await self.check_network_access()
-            await uasyncio.sleep(5)
+            await sleep(5)
     
     def get_mac(self) -> str:
         """Get MAC address of the wifi chip"""

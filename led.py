@@ -1,6 +1,10 @@
+"""
+Built against Pimoroni Micropython version: v1.22.2 (https://github.com/pimoroni/pimoroni-pico/releases/download/v1.22.2/pimoroni-picow-v1.22.2-micropython.uf2)
+"""
+
 from time import sleep
 from machine import Pin
-import uasyncio
+from asyncio import sleep as async_sleep
 from ulogging import uLogger
 
 class Status_LED:
@@ -36,9 +40,9 @@ class Status_LED:
         self.off()
         sleep_duration = (1 / hz) / 2
         for unused in range(count):
-            await uasyncio.sleep(sleep_duration)
+            await async_sleep(sleep_duration)
             self.on()
-            await uasyncio.sleep(sleep_duration)
+            await async_sleep(sleep_duration)
             self.off()
     
     async def async_constant_flash(self, hz: float) -> None:
@@ -49,9 +53,9 @@ class Status_LED:
         self.off()
         sleep_duration = (1 / hz) / 2
         while True:
-            await uasyncio.sleep(sleep_duration)
+            await async_sleep(sleep_duration)
             self.on()
-            await uasyncio.sleep(sleep_duration)
+            await async_sleep(sleep_duration)
             self.off()
     
     def flash(self, count: int, hz: float) -> None:
