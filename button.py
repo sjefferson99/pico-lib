@@ -6,21 +6,23 @@ class Button:
     """
     Async button class that instantiates a coroutine to watch for button pin state changes, debounces and sets appropriate asyncio events.
     """
-    def __init__(self, log_level: int, GPIO_pin: int, pull_up: bool, button_name: str, button_pressed_event: Event, button_released_event: Event) -> None:
+    def __init__(self, GPIO_pin: int, name: str, log_level: int = 2, pull_up: bool = True, pressed_event: Event | None = None, released_event: Event | None = None) -> None:
         """
         Provide buttons details to set up a logged async button watcher on a GPIO pin. Pull_up true for buttons connected to ground and False for pins connected to 3.3v
-        The two event arguments should be of type asyncio.Event and used elsewhere to take action on bitton state changes.
+        The two event arguments should be of type asyncio.Event and used elsewhere to take action on button state changes.
+        You can provide only a GPIO pin and a name and a default pull up button will be created with events accessible as object attributes.
         """
         self.log_level = log_level
         self.logger = uLogger(f"Button {GPIO_pin}", log_level)
+        self.logger.info(f"Init button {name}")
         self.gpio = GPIO_pin
         self.pin_pull = Pin.PULL_DOWN
         if pull_up:
             self.pin_pull = Pin.PULL_UP
         self.pin = Pin(GPIO_pin, Pin.IN, self.pin_pull)
-        self.name = button_name
-        self.button_pressed = button_pressed_event
-        self.button_released = button_released_event
+        self.name = name
+        self.pressed_event: Event = pressed_event if pressed_event is not None else Event()
+        self.released_event: Event = released_event if released_event is not None else Event()
    
     async def wait_for_press(self) -> None:
         """
@@ -41,16 +43,16 @@ class Button:
 
             if self.pin.value() == 0:
                 self.logger.info(f"Button pressed: {self.name}")
-                self.button_pressed.set()
+                self.pressed_event.set()
             else:
                 self.logger.info(f"Button released: {self.name}")
-                self.button_released.set()
+                self.released_event.set()
 
     def clear_pressed(self) -> None:
-        self.button_pressed.clear()
+        self.pressed_event.clear()
     
     def clear_released(self) -> None:
-        self.button_released.clear()
+        self.released_event.clear()
     
     def get_name(self) -> str:
         """Get button name"""
