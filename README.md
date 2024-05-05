@@ -2,6 +2,9 @@
 ## Overview
 Libraries I often use in my own pico projects.
 
+### VS Code
+I use VS Code for better or worse, custom pylance stubs for Pimoroni modules are available here: [https://github.com/pimoroni/pimoroni-pico-stubs](https://github.com/pimoroni/pimoroni-pico-stubs)
+
 ## Libraries
 ### Button
 Class for buttons that includes debouncing and an async event generator on button push and release.
